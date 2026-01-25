@@ -1,0 +1,111 @@
+@model List<ContactMessage>
+@{
+    ViewData["Title"] = "Messages";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Messages</h1>
+    <span class="badge bg-primary fs-6">@Model.Count(m => !m.IsRead) unread</span>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-envelope display-1 text-muted"></i>
+                <p class="lead text-muted mt-3">No messages yet.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;"></th>
+                            <th>From</th>
+                            <th>Email</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var message in Model)
+                        {
+                            <tr class="@(!message.IsRead ? "fw-bold" : "")">
+                                <td>
+                                    @if (!message.IsRead)
+                                    {
+                                        <span class="badge bg-primary rounded-pill">&bull;</span>
+                                    }
+                                </td>
+                                <td>@message.Name</td>
+                                <td>
+                                    <a href="mailto:@message.Email" class="text-decoration-none">@message.Email</a>
+                                </td>
+                                <td>
+                                    <span class="text-truncate d-inline-block" style="max-width: 300px;">
+                                        @message.Message
+                                    </span>
+                                </td>
+                                <td>@message.CreatedAt.ToString("MMM dd, yyyy HH:mm")</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Detail" asp-route-id="@message.Id" class="btn btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        @if (message.IsRead)
+                                        {
+                                            <form asp-action="MarkAsUnread" asp-route-id="@message.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-outline-secondary" title="Mark as unread">
+                                                    <i class="bi bi-envelope"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="MarkAsRead" asp-route-id="@message.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-outline-secondary" title="Mark as read">
+                                                    <i class="bi bi-envelope-open"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@message.Id">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteModal-@message.Id" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content bg-dark">
+                                                <div class="modal-header border-secondary">
+                                                    <h5 class="modal-title">Delete Message</h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the message from "<strong>@message.Name</strong>"?
+                                                </div>
+                                                <div class="modal-footer border-secondary">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form asp-action="Delete" asp-route-id="@message.Id" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

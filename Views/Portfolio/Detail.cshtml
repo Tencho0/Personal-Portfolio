@@ -1,0 +1,84 @@
+@model Project
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Portfolio" asp-action="Index" class="text-decoration-none">Portfolio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            @if (!string.IsNullOrEmpty(Model.ThumbnailImagePath))
+            {
+                <img src="@Model.ThumbnailImagePath" alt="@Model.Title" class="img-fluid rounded mb-4">
+            }
+
+            <h1 class="mb-3">@Model.Title</h1>
+
+            @if (!string.IsNullOrEmpty(Model.ClientName))
+            {
+                <p class="text-muted">
+                    <i class="bi bi-building me-1"></i> Client: @Model.ClientName
+                </p>
+            }
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">About This Project</h5>
+                    <p class="card-text">@(Model.LongDescription ?? Model.ShortDescription)</p>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Technologies))
+            {
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Technologies Used</h5>
+                        <div>
+                            @foreach (var tech in Model.Technologies.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                            {
+                                <span class="tech-badge">@tech</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 100px;">
+                <div class="card-body">
+                    <h5 class="card-title">Project Links</h5>
+                    <div class="d-grid gap-2">
+                        @if (!string.IsNullOrEmpty(Model.LiveUrl))
+                        {
+                            <a href="@Model.LiveUrl" target="_blank" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-up-right me-2"></i> View Live Site
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.GithubUrl))
+                        {
+                            <a href="@Model.GithubUrl" target="_blank" class="btn btn-outline-secondary">
+                                <i class="bi bi-github me-2"></i> View Source Code
+                            </a>
+                        }
+                        <a asp-controller="Contact" asp-action="Index" class="btn btn-outline-primary">
+                            <i class="bi bi-chat-dots me-2"></i> Discuss Similar Project
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-controller="Portfolio" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i> Back to Portfolio
+        </a>
+    </div>
+</div>

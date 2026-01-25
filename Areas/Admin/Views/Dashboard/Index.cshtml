@@ -1,0 +1,120 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Dashboard</h1>
+    <span class="text-muted">Welcome back!</span>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-4 col-xl-2">
+        <div class="card stat-card h-100">
+            <i class="bi bi-folder fs-3 text-primary mb-2"></i>
+            <div class="stat-value">@Model.ProjectCount</div>
+            <div class="text-muted">Projects</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-2">
+        <div class="card stat-card h-100">
+            <i class="bi bi-journal-text fs-3 text-success mb-2"></i>
+            <div class="stat-value">@Model.BlogPostCount</div>
+            <div class="text-muted">Blog Posts</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-2">
+        <div class="card stat-card h-100">
+            <i class="bi bi-chat-quote fs-3 text-info mb-2"></i>
+            <div class="stat-value">@Model.ReviewCount</div>
+            <div class="text-muted">Reviews</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-2">
+        <div class="card stat-card h-100">
+            <i class="bi bi-award fs-3 text-warning mb-2"></i>
+            <div class="stat-value">@Model.CertificateCount</div>
+            <div class="text-muted">Certificates</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-2">
+        <div class="card stat-card h-100">
+            <i class="bi bi-trophy fs-3 text-danger mb-2"></i>
+            <div class="stat-value">@Model.AwardCount</div>
+            <div class="text-muted">Awards</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-2">
+        <div class="card stat-card h-100">
+            <i class="bi bi-envelope fs-3 text-secondary mb-2"></i>
+            <div class="stat-value">@Model.UnreadMessagesCount</div>
+            <div class="text-muted">Unread Messages</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-controller="Projects" asp-action="Create" class="btn btn-primary">
+                        <i class="bi bi-plus me-1"></i>New Project
+                    </a>
+                    <a asp-controller="Blog" asp-action="Create" class="btn btn-success">
+                        <i class="bi bi-plus me-1"></i>New Blog Post
+                    </a>
+                    <a asp-controller="Reviews" asp-action="Create" class="btn btn-info">
+                        <i class="bi bi-plus me-1"></i>New Review
+                    </a>
+                    <a asp-controller="Certificates" asp-action="Create" class="btn btn-warning">
+                        <i class="bi bi-plus me-1"></i>New Certificate
+                    </a>
+                    <a asp-controller="Awards" asp-action="Create" class="btn btn-danger">
+                        <i class="bi bi-plus me-1"></i>New Award
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-envelope me-2"></i>Latest Messages</h5>
+                <a asp-controller="Messages" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                @if (!Model.LatestMessages.Any())
+                {
+                    <p class="text-muted mb-0">No messages yet.</p>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var message in Model.LatestMessages)
+                        {
+                            <a asp-controller="Messages" asp-action="Detail" asp-route-id="@message.Id"
+                               class="list-group-item list-group-item-action bg-transparent border-0 px-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong class="@(!message.IsRead ? "text-primary" : "")">@message.Name</strong>
+                                        <small class="text-muted d-block">@message.Email</small>
+                                    </div>
+                                    <small class="text-muted">@message.CreatedAt.ToString("MMM dd")</small>
+                                </div>
+                                <p class="mb-0 text-muted small text-truncate" style="max-width: 300px;">
+                                    @message.Message
+                                </p>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

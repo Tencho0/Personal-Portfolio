@@ -1,0 +1,83 @@
+@model List<Review>
+@{
+    ViewData["Title"] = "Reviews";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Client Reviews</h1>
+        <p class="lead text-muted">What my clients say about working with me</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-chat-square-quote display-1 text-muted"></i>
+            <p class="lead text-muted mt-3">No reviews yet. Be the first to leave one!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var review in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                @if (!string.IsNullOrEmpty(review.PhotoPath))
+                                {
+                                    <img src="@review.PhotoPath" alt="@review.Name" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                        <i class="bi bi-person fs-3"></i>
+                                    </div>
+                                }
+                                <div>
+                                    <h5 class="mb-0">@review.Name</h5>
+                                    @if (!string.IsNullOrEmpty(review.Source))
+                                    {
+                                        <small class="text-muted">
+                                            <i class="bi bi-geo-alt me-1"></i>@review.Source
+                                        </small>
+                                    }
+                                </div>
+                            </div>
+
+                            @if (review.StarRating.HasValue)
+                            {
+                                <div class="star-rating mb-3">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="bi @(i <= review.StarRating ? "bi-star-fill" : "bi-star") fs-5"></i>
+                                    }
+                                </div>
+                            }
+
+                            <blockquote class="mb-0">
+                                <i class="bi bi-quote fs-3 text-primary opacity-50"></i>
+                                <p class="fst-italic">@review.Text</p>
+                            </blockquote>
+                        </div>
+                        @if (review.Featured)
+                        {
+                            <div class="card-footer bg-primary bg-opacity-10 border-0">
+                                <small class="text-primary">
+                                    <i class="bi bi-star-fill me-1"></i> Featured Review
+                                </small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="text-center mt-5">
+        <a asp-controller="Contact" asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="bi bi-chat-dots me-2"></i> Work With Me
+        </a>
+    </div>
+</div>

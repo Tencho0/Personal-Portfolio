@@ -1,0 +1,108 @@
+@model ContactMessage
+@{
+    ViewData["Title"] = "Message Detail";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Message from @Model.Name</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Back
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="text-muted small">From</label>
+                        <h5>@Model.Name</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Email</label>
+                        <h5>
+                            <a href="mailto:@Model.Email" class="text-decoration-none">@Model.Email</a>
+                        </h5>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="text-muted small">Received</label>
+                        <p>@Model.CreatedAt.ToString("MMMM dd, yyyy 'at' HH:mm")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Status</label>
+                        <p>
+                            @if (Model.IsRead)
+                            {
+                                <span class="badge bg-secondary">Read</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">Unread</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <label class="text-muted small">Message</label>
+                <div class="p-3 bg-dark rounded mt-2">
+                    <p class="mb-0" style="white-space: pre-wrap;">@Model.Message</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <a href="mailto:@Model.Email?subject=Re: Your message" class="btn btn-primary">
+                <i class="bi bi-reply me-1"></i>Reply via Email
+            </a>
+            @if (Model.IsRead)
+            {
+                <form asp-action="MarkAsUnread" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-secondary">
+                        <i class="bi bi-envelope me-1"></i>Mark as Unread
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form asp-action="MarkAsRead" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-secondary">
+                        <i class="bi bi-envelope-open me-1"></i>Mark as Read
+                    </button>
+                </form>
+            }
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="bi bi-trash me-1"></i>Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Delete Message</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this message from "<strong>@Model.Name</strong>"?
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,164 @@
+@model BlogPost
+@{
+    ViewData["Title"] = "Edit Blog Post";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Edit Blog Post</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Back
+    </a>
+</div>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatedAt" />
+    <input type="hidden" asp-for="IsDeleted" />
+    <input type="hidden" asp-for="PublishedAt" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Title <span class="text-danger">*</span></label>
+                        <input asp-for="Title" class="form-control" placeholder="Post title" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Slug" class="form-label">Slug</label>
+                        <input asp-for="Slug" class="form-control" placeholder="auto-generated-from-title" />
+                        <span asp-validation-for="Slug" class="text-danger small"></span>
+                        <small class="text-muted">Leave empty to auto-generate from title.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PreviewText" class="form-label">Preview Text</label>
+                        <textarea asp-for="PreviewText" class="form-control" rows="2" placeholder="Short preview for listings"></textarea>
+                        <span asp-validation-for="PreviewText" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label asp-for="MarkdownContent" class="form-label mb-0">Content (Markdown) <span class="text-danger">*</span></label>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-secondary active" id="btnWrite">Write</button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnPreview">Preview</button>
+                            </div>
+                        </div>
+                        <div id="writePane">
+                            <textarea asp-for="MarkdownContent" class="form-control font-monospace" rows="15" id="markdownEditor" placeholder="Write your post in Markdown..."></textarea>
+                        </div>
+                        <div id="previewPane" class="markdown-preview d-none"></div>
+                        <span asp-validation-for="MarkdownContent" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-transparent">Publish Settings</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label">Status</label>
+                        <select asp-for="Status" asp-items="Html.GetEnumSelectList<PostStatus>()" class="form-select"></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label">Category</label>
+                        <input asp-for="Category" class="form-control" placeholder="e.g., Tutorial, News" />
+                        <span asp-validation-for="Category" class="text-danger small"></span>
+                    </div>
+
+                    @if (Model.PublishedAt.HasValue)
+                    {
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-calendar me-1"></i>Published: @Model.PublishedAt.Value.ToString("MMM dd, yyyy HH:mm")
+                        </p>
+                    }
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-transparent">Cover Image</div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.CoverImagePath))
+                    {
+                        <div class="mb-2">
+                            <img src="@Model.CoverImagePath" alt="Current cover" class="upload-preview">
+                        </div>
+                    }
+                    <input type="file" name="coverImage" class="form-control" accept="image/*" id="imageInput" />
+                    <div id="imagePreview" class="mt-2"></div>
+                    <small class="text-muted">Leave empty to keep current image.</small>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check me-1"></i>Save Changes
+                </button>
+                @if (Model.Status == PostStatus.Published)
+                {
+                    <a href="/blog/@Model.Slug" target="_blank" class="btn btn-outline-secondary">
+                        <i class="bi bi-eye me-1"></i>View Post
+                    </a>
+                }
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const writePane = document.getElementById('writePane');
+        const previewPane = document.getElementById('previewPane');
+        const btnWrite = document.getElementById('btnWrite');
+        const btnPreview = document.getElementById('btnPreview');
+        const markdownEditor = document.getElementById('markdownEditor');
+
+        btnWrite.addEventListener('click', function() {
+            writePane.classList.remove('d-none');
+            previewPane.classList.add('d-none');
+            btnWrite.classList.add('active');
+            btnPreview.classList.remove('active');
+        });
+
+        btnPreview.addEventListener('click', async function() {
+            writePane.classList.add('d-none');
+            previewPane.classList.remove('d-none');
+            btnWrite.classList.remove('active');
+            btnPreview.classList.add('active');
+
+            const response = await fetch('@Url.Action("PreviewMarkdown")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(markdownEditor.value)
+            });
+            const html = await response.text();
+            previewPane.innerHTML = html || '<p class="text-muted">Nothing to preview</p>';
+        });
+
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" class="upload-preview" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '';
+            }
+        });
+    </script>
+}

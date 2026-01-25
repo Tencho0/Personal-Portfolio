@@ -1,0 +1,65 @@
+@model Certificate
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Certificates" asp-action="Index" class="text-decoration-none">Certificates</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <div class="card-img-top text-center p-4" style="background: rgba(255,255,255,0.05);">
+                        <img src="@Model.ImagePath" alt="@Model.Title" class="img-fluid" style="max-height: 400px;">
+                    </div>
+                }
+                <div class="card-body">
+                    <h1 class="card-title">@Model.Title</h1>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong><i class="bi bi-building me-2"></i>Issuer:</strong>
+                                <span class="text-muted">@Model.Issuer</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong><i class="bi bi-calendar me-2"></i>Date Earned:</strong>
+                                <span class="text-muted">@Model.DateEarned.ToString("MMMM dd, yyyy")</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mb-4">
+                            <h5>Description</h5>
+                            <p>@Model.Description</p>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.VerificationUrl))
+                    {
+                        <a href="@Model.VerificationUrl" target="_blank" class="btn btn-primary">
+                            <i class="bi bi-patch-check me-2"></i> Verify Certificate
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a asp-controller="Certificates" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i> Back to Certificates
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

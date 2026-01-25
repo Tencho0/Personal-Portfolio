@@ -1,0 +1,128 @@
+@model List<BlogPost>
+@{
+    ViewData["Title"] = "Blog Posts";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Blog Posts</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus me-1"></i>Add Post
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-journal-text display-1 text-muted"></i>
+                <p class="lead text-muted mt-3">No blog posts yet.</p>
+                <a asp-action="Create" class="btn btn-primary">Write your first post</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Published</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var post in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(post.CoverImagePath))
+                                    {
+                                        <img src="@post.CoverImagePath" alt="@post.Title" class="rounded" style="width: 60px; height: 40px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 40px;">
+                                            <i class="bi bi-image text-muted"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <strong>@post.Title</strong>
+                                    <br><small class="text-muted">/blog/@post.Slug</small>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(post.Category))
+                                    {
+                                        <span class="badge bg-secondary">@post.Category</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (post.Status == PostStatus.Published)
+                                    {
+                                        <span class="badge badge-published">Published</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-draft">Draft</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (post.PublishedAt.HasValue)
+                                    {
+                                        @post.PublishedAt.Value.ToString("MMM dd, yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        @if (post.Status == PostStatus.Published)
+                                        {
+                                            <a href="/blog/@post.Slug" target="_blank" class="btn btn-outline-secondary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        }
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@post.Id">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteModal-@post.Id" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content bg-dark">
+                                                <div class="modal-header border-secondary">
+                                                    <h5 class="modal-title">Delete Post</h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete "<strong>@post.Title</strong>"?
+                                                </div>
+                                                <div class="modal-footer border-secondary">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form asp-action="Delete" asp-route-id="@post.Id" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

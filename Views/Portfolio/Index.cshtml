@@ -1,0 +1,79 @@
+@model List<Project>
+@{
+    ViewData["Title"] = "Portfolio";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">My Portfolio</h1>
+        <p class="lead text-muted">Check out some of my recent projects</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-folder2-open display-1 text-muted"></i>
+            <p class="lead text-muted mt-3">No projects available yet. Check back soon!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var project in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card project-card h-100">
+                        @if (!string.IsNullOrEmpty(project.ThumbnailImagePath))
+                        {
+                            <img src="@project.ThumbnailImagePath" class="card-img-top" alt="@project.Title">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-image display-4 text-muted"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@project.Title</h5>
+                            @if (!string.IsNullOrEmpty(project.ClientName))
+                            {
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-building me-1"></i> @project.ClientName
+                                </p>
+                            }
+                            <p class="card-text">@project.ShortDescription</p>
+                            @if (!string.IsNullOrEmpty(project.Technologies))
+                            {
+                                <div class="mb-3">
+                                    @foreach (var tech in project.Technologies.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                                    {
+                                        <span class="badge bg-secondary me-1">@tech</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3">
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a asp-action="Detail" asp-route-slug="@project.Slug" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-eye me-1"></i> Details
+                                </a>
+                                @if (!string.IsNullOrEmpty(project.LiveUrl))
+                                {
+                                    <a href="@project.LiveUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i> Live
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(project.GithubUrl))
+                                {
+                                    <a href="@project.GithubUrl" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-github me-1"></i> Code
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

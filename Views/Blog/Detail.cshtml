@@ -1,0 +1,100 @@
+@using Portfolio.Helpers
+@model BlogPost
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<article class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Blog" asp-action="Index" class="text-decoration-none">Blog</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            @if (!string.IsNullOrEmpty(Model.CoverImagePath))
+            {
+                <img src="@Model.CoverImagePath" alt="@Model.Title" class="img-fluid rounded mb-4 w-100" style="max-height: 400px; object-fit: cover;">
+            }
+
+            <header class="mb-4">
+                @if (!string.IsNullOrEmpty(Model.Category))
+                {
+                    <span class="badge bg-primary mb-2">@Model.Category</span>
+                }
+                <h1 class="display-5 fw-bold">@Model.Title</h1>
+                <div class="text-muted">
+                    <i class="bi bi-calendar me-1"></i>
+                    @Model.PublishedAt?.ToString("MMMM dd, yyyy")
+                </div>
+            </header>
+
+            <div class="card">
+                <div class="card-body blog-content">
+                    @Html.Raw(MarkdownHelper.ToHtml(Model.MarkdownContent))
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+                <a asp-controller="Blog" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i> Back to Blog
+                </a>
+                <div>
+                    <a asp-controller="Contact" asp-action="Index" class="btn btn-primary">
+                        <i class="bi bi-chat me-2"></i> Let's Discuss
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+
+@section Styles {
+    <style>
+        .blog-content {
+            line-height: 1.8;
+        }
+        .blog-content h1, .blog-content h2, .blog-content h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .blog-content p {
+            margin-bottom: 1rem;
+        }
+        .blog-content code {
+            background-color: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+        .blog-content pre {
+            background-color: #0d1117;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .blog-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .blog-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin-left: 0;
+            font-style: italic;
+            color: #94a3b8;
+        }
+        .blog-content ul, .blog-content ol {
+            margin-bottom: 1rem;
+        }
+        .blog-content a {
+            color: var(--primary-color);
+        }
+    </style>
+}

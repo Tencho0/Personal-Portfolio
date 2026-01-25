@@ -1,0 +1,56 @@
+@model List<BlogPost>
+@{
+    ViewData["Title"] = "Blog";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Blog</h1>
+        <p class="lead text-muted">Thoughts, tutorials, and insights</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-journal-text display-1 text-muted"></i>
+            <p class="lead text-muted mt-3">No blog posts yet. Check back soon!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var post in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(post.CoverImagePath))
+                        {
+                            <img src="@post.CoverImagePath" class="card-img-top" alt="@post.Title" style="height: 180px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                @if (!string.IsNullOrEmpty(post.Category))
+                                {
+                                    <span class="badge bg-primary">@post.Category</span>
+                                }
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    @post.PublishedAt?.ToString("MMM dd, yyyy")
+                                </small>
+                            </div>
+                            <h5 class="card-title">@post.Title</h5>
+                            <p class="card-text text-muted">
+                                @(post.PreviewText ?? (post.MarkdownContent.Length > 120 ? post.MarkdownContent.Substring(0, 120) + "..." : post.MarkdownContent))
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3">
+                            <a asp-action="Detail" asp-route-slug="@post.Slug" class="btn btn-outline-primary">
+                                Read More <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
