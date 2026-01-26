@@ -139,12 +139,12 @@
             <div class="d-flex flex-wrap gap-2">
                 @foreach (var tech in techStack)
                 {
-                    <div class="d-flex align-items-center bg-dark rounded px-3 py-2">
+                    <div class="d-flex align-items-center rounded px-3 py-2" style="background-color: #334155; border: 1px solid #475569;">
                         @if (!string.IsNullOrEmpty(tech.LogoPath))
                         {
                             <img src="@tech.LogoPath" alt="@tech.Name" style="height: 20px; margin-right: 8px;">
                         }
-                        <span>@tech.Name</span>
+                        <span style="color: #f1f5f9;">@tech.Name</span>
                         <form asp-action="DeleteTechStack" asp-route-id="@tech.Id" method="post" class="d-inline ms-2">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-link btn-sm text-danger p-0" onclick="return confirm('Delete this technology?')">

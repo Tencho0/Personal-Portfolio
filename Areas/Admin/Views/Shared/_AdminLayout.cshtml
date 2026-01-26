@@ -193,21 +193,33 @@
             border-radius: 8px;
             padding: 1rem;
             min-height: 300px;
+            color: #e2e8f0;
         }
 
-        .markdown-preview h1, .markdown-preview h2, .markdown-preview h3 {
+        .markdown-preview h1, .markdown-preview h2, .markdown-preview h3, .markdown-preview h4, .markdown-preview h5, .markdown-preview h6 {
             margin-top: 1rem;
             margin-bottom: 0.5rem;
+            color: #f8fafc;
         }
 
         .markdown-preview p {
             margin-bottom: 0.75rem;
+            color: #e2e8f0;
+        }
+
+        .markdown-preview li {
+            color: #e2e8f0;
+        }
+
+        .markdown-preview strong {
+            color: #f8fafc;
         }
 
         .markdown-preview code {
-            background-color: rgba(255,255,255,0.1);
+            background-color: rgba(255,255,255,0.15);
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
+            color: #fbbf24;
         }
 
         .markdown-preview pre {
@@ -215,6 +227,30 @@
             padding: 1rem;
             border-radius: 8px;
             overflow-x: auto;
+        }
+
+        .markdown-preview pre code {
+            background: none;
+            color: #e2e8f0;
+        }
+
+        .markdown-preview a {
+            color: #60a5fa;
+        }
+
+        .markdown-preview table {
+            color: #e2e8f0;
+        }
+
+        .markdown-preview th {
+            color: #f8fafc;
+        }
+
+        .markdown-preview blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin-left: 0;
+            color: #cbd5e1;
         }
 
         .upload-preview {
