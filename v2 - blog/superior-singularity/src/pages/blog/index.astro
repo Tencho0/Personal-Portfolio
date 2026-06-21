@@ -20,7 +20,7 @@ const posts = (await getCollection('blog')).sort(
 		<Header />
 		<main>
 			<h1>Blog</h1>
-			<ul class="post-list">
+			<ul class="post-list" role="list">
 				{posts.map((post) => <PostListItem post={post} />)}
 			</ul>
 		</main>

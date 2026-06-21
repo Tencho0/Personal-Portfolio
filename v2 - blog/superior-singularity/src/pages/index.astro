@@ -19,6 +19,7 @@ const posts = (await getCollection('blog'))
 	<body>
 		<Header />
 		<main>
+			<h1 class="sr-only">{SITE_TITLE}</h1>
 			<section class="intro">
 				<p>
 					I'm {SITE_TITLE} — a software engineer. I write about the things I build,
@@ -27,7 +28,7 @@ const posts = (await getCollection('blog'))
 			</section>
 			<section>
 				<h2>Recent posts</h2>
-				<ul class="post-list">
+				<ul class="post-list" role="list">
 					{posts.map((post) => <PostListItem post={post} />)}
 				</ul>
 				<p class="all-link"><a href="/blog">All posts →</a></p>
